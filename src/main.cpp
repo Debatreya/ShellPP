@@ -36,7 +36,11 @@ int main()
         if (!input.empty())
         {
             int ret_code = system(input.c_str());
-            if (ret_code != 0)
+            if (ret_code == 127)
+            {
+                cerr << input << ": not found" << endl;
+            }
+            else if (ret_code != 0)
             {
                 cerr << "Error: Command failed with code " << ret_code << endl;
             }
