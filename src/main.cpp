@@ -1,21 +1,22 @@
+#include<bits/stdc++.h>
 #include <iostream>
 #include <string>
+#include <cstdlib>
+#include <cstdio>
+#include <sstream>
 using namespace std;
-
-// // Declare an array of strings having valid commands (GLOBAL)
-string commands[] = {"echo", "type", "exit"};
 
 // Helper Functions
 // TRIM removes spaces from the beginning and end of the string
 string trim(string input)
 {
   // Remove spaces from the beginning
-  while (input[0] == ' ')
+  while (!input.empty() && input[0] == ' ')
   {
     input = input.substr(1);
   }
   // Remove spaces from the end
-  while (input[input.size() - 1] == ' ')
+  while (!input.empty() && input[input.size() - 1] == ' ')
   {
     input = input.substr(0, input.size() - 1);
   }
@@ -53,28 +54,38 @@ string ECHO(string input)
   res = trim(res);
   return res;
 }
-// TYPE extracts the string after "type" and returns it
+
+// TYPE invokes the system's type command and returns the output
 string TYPE(string input)
 {
-  string res = input.substr(5); // Remove "type" from the input
-  // Trim spaces from the beginning and end of the string
-  res = trim(res);
-  // Check if the command is valid
-  bool valid = false;
-  for (int i = 0; i < 3; i++)
+  string command = input.substr(5); // Remove "type" from the input
+  command = trim(command);
+
+  if (command.empty())
   {
-    if (res == commands[i])
-    {
-      valid = true;
-      break;
-    }
+    return "type: missing argument";
   }
-  // If the command is valid, print it
-  if (valid)
+
+  stringstream systemCommand;
+  systemCommand << "type " << command << " 2>&1"; // Prepare the system command
+
+  FILE *pipe = popen(systemCommand.str().c_str(), "r");
+  if (!pipe)
   {
-    return res + " is a shell builtin";
+    return "Error: Unable to execute command.";
   }
-  return res + ": not found";
+
+  char buffer[128];
+  string result = "";
+  while (fgets(buffer, sizeof(buffer), pipe) != nullptr)
+  {
+    result += buffer;
+  }
+
+  pclose(pipe);
+
+  result = trim(result);
+  return result;
 }
 
 int main()
