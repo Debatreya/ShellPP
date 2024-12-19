@@ -11,9 +11,8 @@ int main() {
     cout << "$ ";
     string input;
     getline(cin, input);
-    if (input == "exit") {
-      cout << "Goodbye!" << endl;
-      break;
+    if (input == "exit 0") {
+      return 0;
     } else {
       cerr << input << ": command not found" << endl;
     }
