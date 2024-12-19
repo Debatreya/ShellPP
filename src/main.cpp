@@ -7,14 +7,17 @@ int main() {
   cout << unitbuf;
   cerr << unitbuf;
 
-  cout << "$ ";
-
-  string input;
-  getline(cin, input);
-  if(false) {
-    cout << "Goodbye!" << endl;
-    return 0;
-  }else{
-    cerr << input << ": command not found" << endl;
+  while (true) {
+    cout << "$ ";
+    string input;
+    getline(cin, input);
+    if (input == "exit") {
+      cout << "Goodbye!" << endl;
+      break;
+    } else {
+      cerr << input << ": command not found" << endl;
+    }
   }
+
+  return 0;
 }
