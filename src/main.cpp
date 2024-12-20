@@ -1,22 +1,20 @@
 #include <iostream>
 #include <string>
+#include <cstdlib>
+#include <sstream>
 using namespace std;
-
-// TODO: DONT need this Right now
-// // Declare an array of strings having valid commands (GLOBAL)
-// string commands[] = {"echo", "type", "exit"};
 
 // Helper Functions
 // TRIM removes spaces from the beginning and end of the string
 string trim(string input)
 {
   // Remove spaces from the beginning
-  while (input[0] == ' ')
+  while (!input.empty() && input[0] == ' ')
   {
     input = input.substr(1);
   }
   // Remove spaces from the end
-  while (input[input.size() - 1] == ' ')
+  while (!input.empty() && input[input.size() - 1] == ' ')
   {
     input = input.substr(0, input.size() - 1);
   }
@@ -54,11 +52,25 @@ string ECHO(string input)
   res = trim(res);
   return res;
 }
-// TYPE extracts the string after "type" and returns it
+// TYPE passes the whole input to the system command
 void TYPE(string input)
 {
-  // Pass the whole input to the system command
   system(input.c_str());
+}
+
+// RUN_EXTERNAL executes external programs with arguments
+void RUN_EXTERNAL(const string &input)
+{
+  // Pass the input directly to the system command
+  int ret_code = system(input.c_str());
+  if (ret_code == 127)
+  {
+    cerr << input << ": not found" << endl;
+  }
+  else if (ret_code != 0)
+  {
+    cerr << "Error: Command failed with code " << ret_code << endl;
+  }
 }
 
 int main()
@@ -90,7 +102,7 @@ int main()
     }
     else
     {
-      cerr << input << ": command not found" << endl;
+      RUN_EXTERNAL(input);
     }
   }
 
