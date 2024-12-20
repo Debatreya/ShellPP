@@ -98,7 +98,8 @@ void RUN_EXTERNAL(const string &input)
   }
   else if (ret_code != 0)
   {
-    cerr << "Error: Command failed with code " << ret_code << endl;
+    // Is is my custom error message
+    cerr << command << ": not found" << endl;
   }
 }
 
