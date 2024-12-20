@@ -63,41 +63,54 @@ string ECHO(string input)
 
   string parsed;
   bool in_single_quote = false, in_double_quote = false;
+  string temp;
 
   for (size_t i = 0; i < res.size(); ++i)
   {
     char c = res[i];
-    if (c == '\\' && i + 1 < res.size()) // Handle escape sequences
-    {
-      parsed += res[++i];
-    }
-    else if (c == '\'' && !in_double_quote) // Toggle single quotes
+
+    if (c == '\'' && !in_double_quote) // Toggle single quotes
     {
       in_single_quote = !in_single_quote;
+      if (!in_single_quote)
+      {
+        parsed += temp;
+        temp.clear();
+      }
     }
     else if (c == '"' && !in_single_quote) // Toggle double quotes
     {
       in_double_quote = !in_double_quote;
+      if (!in_double_quote)
+      {
+        parsed += temp;
+        temp.clear();
+      }
     }
-    else
+    else if (in_single_quote || in_double_quote) // Inside quotes
+    {
+      temp += c;
+    }
+    else if (c == '\\' && i + 1 < res.size()) // Handle escape sequences
+    {
+      parsed += res[++i];
+    }
+    else if (c == ' ' && !parsed.empty() && parsed.back() != ' ') // Normalize spaces outside quotes
+    {
+      parsed += ' ';
+    }
+    else if (c != ' ') // Append non-space characters
     {
       parsed += c;
     }
   }
 
-  // Normalize whitespace if not inside quotes
-  stringstream ss(parsed);
-  string word, normalized;
-  while (ss >> word)
+  if (!temp.empty()) // Append remaining quoted content
   {
-    if (!normalized.empty())
-    {
-      normalized += " ";
-    }
-    normalized += word;
+    parsed += temp;
   }
 
-  return normalized;
+  return parsed;
 }
 
 // TYPE passes the whole input to the system command
