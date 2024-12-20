@@ -85,8 +85,21 @@ string ECHO(string input)
     }
   }
 
-  return parsed;
+  // Normalize whitespace if not inside quotes
+  stringstream ss(parsed);
+  string word, normalized;
+  while (ss >> word)
+  {
+    if (!normalized.empty())
+    {
+      normalized += " ";
+    }
+    normalized += word;
+  }
+
+  return normalized;
 }
+
 // TYPE passes the whole input to the system command
 void TYPE(string input)
 {
