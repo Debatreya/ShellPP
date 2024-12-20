@@ -55,7 +55,24 @@ string ECHO(string input)
 // TYPE passes the whole input to the system command
 void TYPE(string input)
 {
-  system(input.c_str());
+  string command = input.substr(5); // Extract the argument after "type"
+  command = trim(command);
+
+  if (command == "echo" || command == "exit" || command == "type")
+  {
+    if (command == "exit")
+      cout << "exit is a special shell builtin" << endl;
+    else
+      cout << command << " is a shell builtin" << endl;
+  }
+  else
+  {
+    int ret_code = system(input.c_str());
+    if (ret_code == 127)
+    {
+      cerr << command << ": not found" << endl;
+    }
+  }
 }
 
 // RUN_EXTERNAL executes external programs with arguments
@@ -65,7 +82,9 @@ void RUN_EXTERNAL(const string &input)
   int ret_code = system(input.c_str());
   if (ret_code == 127)
   {
-    cerr << input << ": not found" << endl;
+    size_t space_pos = input.find(' ');
+    string command = (space_pos == string::npos) ? input : input.substr(0, space_pos);
+    cerr << command << ": not found" << endl;
   }
   else if (ret_code != 0)
   {
