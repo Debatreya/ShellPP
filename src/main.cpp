@@ -75,7 +75,8 @@ void RUN_EXTERNAL(const string &input)
   }
   else if (ret_code != 0) // Other errors
   {
-    cerr << "Error: Command failed with code " << ret_code << endl;
+    // cerr << "Error: Command failed with code " << ret_code << endl;
+    cerr << command << ": command not found" << endl;
   }
 }
 
