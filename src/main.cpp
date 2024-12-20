@@ -2,7 +2,7 @@
 #include <string>
 #include <cstdlib>
 #include <sstream>
-// #include <unistd.h>
+#include <unistd.h>
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -89,12 +89,15 @@ void TYPE(string input)
 // RUN_EXTERNAL executes external programs with arguments
 void RUN_EXTERNAL(const string &input)
 {
-  // Pass the input directly to the system command
-  int ret_code = system(input.c_str());
+  // Extract the command name (first word of the input)
+  size_t space_pos = input.find(' ');
+  string command = (space_pos == string::npos) ? input : input.substr(0, space_pos);
+
+  // Redirect shell error messages to /dev/null
+  string command_with_redirect = input + " 2>/dev/null";
+  int ret_code = system(command_with_redirect.c_str());
   if (ret_code == 127)
   {
-    size_t space_pos = input.find(' ');
-    string command = (space_pos == string::npos) ? input : input.substr(0, space_pos);
     cerr << command << ": not found" << endl;
   }
   else if (ret_code != 0)
