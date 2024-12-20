@@ -2,8 +2,9 @@
 #include <string>
 using namespace std;
 
+// TODO: DONT need this Right now
 // // Declare an array of strings having valid commands (GLOBAL)
-string commands[] = {"echo", "type", "exit"};
+// string commands[] = {"echo", "type", "exit"};
 
 // Helper Functions
 // TRIM removes spaces from the beginning and end of the string
