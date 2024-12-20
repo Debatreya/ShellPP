@@ -111,11 +111,28 @@ void RUN_EXTERNAL(const string &input)
 void CD(const string &input)
 {
   string path = trim(input.substr(3)); // Extract the argument after "cd"
+
+  // Handle '~' for home directory
+  if (path == "~")
+  {
+    char *home = getenv("HOME");
+    if (home)
+    {
+      path = string(home);
+    }
+    else
+    {
+      cerr << "cd: HOME environment variable is not set" << endl;
+      return;
+    }
+  }
+
   if (chdir(path.c_str()) != 0)
   {
     cerr << "cd: " << path << ": No such file or directory" << endl;
   }
 }
+
 
 int main()
 {
