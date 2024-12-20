@@ -59,9 +59,33 @@ bool checkCD(string input)
 string ECHO(string input)
 {
   string res = input.substr(5); // Remove "echo" from the input
-  // Trim spaces from the beginning and end of the string
-  res = trim(res);
-  return res;
+  res = trim(res); // Trim spaces from the beginning and end of the string
+
+  string parsed;
+  bool in_single_quote = false, in_double_quote = false;
+
+  for (size_t i = 0; i < res.size(); ++i)
+  {
+    char c = res[i];
+    if (c == '\\' && i + 1 < res.size()) // Handle escape sequences
+    {
+      parsed += res[++i];
+    }
+    else if (c == '\'' && !in_double_quote) // Toggle single quotes
+    {
+      in_single_quote = !in_single_quote;
+    }
+    else if (c == '"' && !in_single_quote) // Toggle double quotes
+    {
+      in_double_quote = !in_double_quote;
+    }
+    else
+    {
+      parsed += c;
+    }
+  }
+
+  return parsed;
 }
 // TYPE passes the whole input to the system command
 void TYPE(string input)
