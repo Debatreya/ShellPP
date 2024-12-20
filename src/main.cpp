@@ -98,12 +98,12 @@ void RUN_EXTERNAL(const string &input)
   int ret_code = system(command_with_redirect.c_str());
   if (ret_code == 127)
   {
-    cerr << command << ": not found" << endl;
+    cerr << command << ": command not found" << endl;
   }
   else if (ret_code != 0)
   {
     // Is is my custom error message
-    cerr << command << ": not found" << endl;
+    cerr << command << ": command not found" << endl;
   }
 }
 
