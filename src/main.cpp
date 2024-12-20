@@ -61,17 +61,19 @@ void TYPE(string input)
 // RUN_EXTERNAL executes external programs with arguments
 void RUN_EXTERNAL(const string &input)
 {
-  // Redirect shell error messages to /dev/null
-  string command = input + " 2>/dev/null";
-  int ret_code = system(command.c_str());
+  // Extract the command name (first word of the input)
+  size_t space_pos = input.find(' ');
+  string command = (space_pos == string::npos) ? input : input.substr(0, space_pos);
 
-  if (ret_code == 127)
+  // Redirect shell error messages to /dev/null
+  string command_with_redirect = input + " 2>/dev/null";
+  int ret_code = system(command_with_redirect.c_str());
+
+  if (ret_code == 127) // Command not found
   {
-    size_t space_pos = input.find(' ');
-    string cmd_name = (space_pos == string::npos) ? input : input.substr(0, space_pos);
-    cerr << cmd_name << ": command not found" << endl;
+    cerr << command << ": command not found" << endl;
   }
-  else if (ret_code != 0)
+  else if (ret_code != 0) // Other errors
   {
     cerr << "Error: Command failed with code " << ret_code << endl;
   }
