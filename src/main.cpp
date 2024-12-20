@@ -2,6 +2,7 @@
 #include <string>
 #include <cstdlib>
 #include <sstream>
+#include <unistd.h>
 using namespace std;
 
 // Helper Functions
@@ -42,6 +43,15 @@ bool checkTYPE(string input)
   }
   return false;
 }
+// checkCD checks if the command is cd
+bool checkCD(string input)
+{
+  if (input.substr(0, 2) == "cd")
+  {
+    return true;
+  }
+  return false;
+}
 
 // Extract and Execute the command
 // ECHO extracts the string after "echo" and returns it
@@ -55,31 +65,52 @@ string ECHO(string input)
 // TYPE passes the whole input to the system command
 void TYPE(string input)
 {
-  system(input.c_str());
+  string command = input.substr(5); // Extract the argument after "type"
+  command = trim(command);
+
+  if (command == "echo" || command == "exit" || command == "type")
+  {
+    if (command == "exit")
+      cout << "exit is a special shell builtin" << endl;
+    else
+      cout << command << " is a shell builtin" << endl;
+  }
+  else
+  {
+    int ret_code = system(input.c_str());
+    if (ret_code == 127)
+    {
+      cerr << command << ": not found" << endl;
+    }
+  }
 }
 
 // RUN_EXTERNAL executes external programs with arguments
 void RUN_EXTERNAL(const string &input)
 {
-  // Extract the command name (first word of the input)
-  size_t space_pos = input.find(' ');
-  string command = (space_pos == string::npos) ? input : input.substr(0, space_pos);
-
-  // Redirect shell error messages to /dev/null
-  string command_with_redirect = input + " 2>/dev/null";
-  int ret_code = system(command_with_redirect.c_str());
-
-  if (ret_code == 127) // Command not found
+  // Pass the input directly to the system command
+  int ret_code = system(input.c_str());
+  if (ret_code == 127)
   {
-    cerr << command << ": command not found" << endl;
+    size_t space_pos = input.find(' ');
+    string command = (space_pos == string::npos) ? input : input.substr(0, space_pos);
+    cerr << command << ": not found" << endl;
   }
-  else if (ret_code != 0) // Other errors
+  else if (ret_code != 0)
   {
-    // cerr << "Error: Command failed with code " << ret_code << endl;
-    cerr << command << ": command not found" << endl;
+    cerr << "Error: Command failed with code " << ret_code << endl;
   }
 }
 
+// CD changes the current working directory
+void CD(const string &input)
+{
+  string path = trim(input.substr(3)); // Extract the argument after "cd"
+  if (chdir(path.c_str()) != 0)
+  {
+    cerr << "cd: " << path << ": No such file or directory" << endl;
+  }
+}
 
 int main()
 {
@@ -107,6 +138,10 @@ int main()
     else if (checkTYPE(input))
     {
       TYPE(input);
+    }
+    else if (checkCD(input))
+    {
+      CD(input);
     }
     else
     {
